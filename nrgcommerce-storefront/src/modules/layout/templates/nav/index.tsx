@@ -11,47 +11,61 @@ export default async function Nav() {
 
   return (
     <div className="sticky top-0 inset-x-0 z-50 group">
-      <header className="relative h-16 mx-auto border-b duration-200 bg-white border-ui-border-base">
-        <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular">
+      <header className="relative h-20 mx-auto border-b border-gray-200 duration-300 bg-white/95 backdrop-blur-sm shadow-sm">
+        <nav className="content-container flex items-center justify-between w-full h-full">
+          {/* Left side - Menu */}
           <div className="flex-1 basis-0 h-full flex items-center">
             <div className="h-full">
               <SideMenu regions={regions} />
             </div>
           </div>
 
+          {/* Center - Logo */}
           <div className="flex items-center h-full">
             <LocalizedClientLink
               href="/"
-              className="txt-compact-xlarge-plus hover:text-ui-fg-base uppercase"
+              className="text-3xl font-bold text-gray-900 hover:text-gray-700 transition-colors duration-300 tracking-wider"
               data-testid="nav-store-link"
             >
               NRG
             </LocalizedClientLink>
           </div>
 
-          <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
-            <div className="hidden small:flex items-center gap-x-6 h-full">
+          {/* Right side - Account & Cart */}
+          <div className="flex items-center gap-x-8 h-full flex-1 basis-0 justify-end">
+            {/* Account Link - Isolated from cart updates */}
+            <div className="hidden small:flex items-center h-full">
               <LocalizedClientLink
-                className="hover:text-ui-fg-base"
+                className="relative px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-300 group/account"
                 href="/account"
                 data-testid="nav-account-link"
               >
-                Account
+                <span className="relative">
+                  Account
+                  <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-900 transform scale-x-0 transition-transform duration-300 group-hover/account:scale-x-100"></span>
+                </span>
               </LocalizedClientLink>
             </div>
-            <Suspense
-              fallback={
-                <LocalizedClientLink
-                  className="hover:text-ui-fg-base flex gap-2"
-                  href="/cart"
-                  data-testid="nav-cart-link"
-                >
-                  Cart (0)
-                </LocalizedClientLink>
-              }
-            >
-              <CartButton />
-            </Suspense>
+            
+            {/* Cart Button - Separate container */}
+            <div className="flex items-center h-full">
+              <Suspense
+                fallback={
+                  <LocalizedClientLink
+                    className="relative px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-300 flex items-center gap-2 group/cart"
+                    href="/cart"
+                    data-testid="nav-cart-link"
+                  >
+                    <span className="relative">
+                      Cart (0)
+                      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-900 transform scale-x-0 transition-transform duration-300 group-hover/cart:scale-x-100"></span>
+                    </span>
+                  </LocalizedClientLink>
+                }
+              >
+                <CartButton />
+              </Suspense>
+            </div>
           </div>
         </nav>
       </header>
