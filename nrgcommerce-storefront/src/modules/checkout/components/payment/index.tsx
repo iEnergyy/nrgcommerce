@@ -1,7 +1,7 @@
 "use client"
 
 import { RadioGroup } from "@headlessui/react"
-import { isStripe as isStripeFunc, paymentInfoMap } from "@lib/constants"
+import { isStripe as isStripeFunc, isBankTransfer, paymentInfoMap } from "@lib/constants"
 import { initiatePaymentSession } from "@lib/data/cart"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
 import { Button, Container, Heading, Text, clx } from "@medusajs/ui"
@@ -9,6 +9,7 @@ import ErrorMessage from "@modules/checkout/components/error-message"
 import PaymentContainer, {
   StripeCardContainer,
 } from "@modules/checkout/components/payment-container"
+import BankTransferContainer from "@modules/checkout/components/bank-transfer-container"
 import Divider from "@modules/common/components/divider"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
@@ -28,6 +29,7 @@ const Payment = ({
   const [error, setError] = useState<string | null>(null)
   const [cardBrand, setCardBrand] = useState<string | null>(null)
   const [cardComplete, setCardComplete] = useState(false)
+  const [selectedBankAccount, setSelectedBankAccount] = useState<string>("")
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
     activeSession?.provider_id ?? ""
   )
@@ -39,14 +41,24 @@ const Payment = ({
   const isOpen = searchParams.get("step") === "payment"
 
   const isStripe = isStripeFunc(selectedPaymentMethod)
+  const isBankTransferMethod = isBankTransfer(selectedPaymentMethod)
 
   const setPaymentMethod = async (method: string) => {
     setError(null)
     setSelectedPaymentMethod(method)
-    if (isStripeFunc(method)) {
-      await initiatePaymentSession(cart, {
+    if (isStripeFunc(method) || isBankTransfer(method)) {
+      const sessionData: any = {
         provider_id: method,
-      })
+      }
+      
+      // Add bank account ID for bank transfer
+      if (isBankTransfer(method) && selectedBankAccount) {
+        sessionData.data = {
+          bankAccountId: selectedBankAccount
+        }
+      }
+      
+      await initiatePaymentSession(cart, sessionData)
     }
   }
 
@@ -153,7 +165,14 @@ const Payment = ({
                         setError={setError}
                         setCardComplete={setCardComplete}
                       />
-                    ) : (
+                      ) : isBankTransfer(paymentMethod.id) ? (
+                        <BankTransferContainer
+                          paymentProviderId={paymentMethod.id}
+                          selectedPaymentOptionId={selectedPaymentMethod}
+                          paymentInfoMap={paymentInfoMap}
+                          onBankAccountSelect={setSelectedBankAccount}
+                        />
+                      ) : (
                       <PaymentContainer
                         paymentInfoMap={paymentInfoMap}
                         paymentProviderId={paymentMethod.id}
@@ -192,6 +211,7 @@ const Payment = ({
             isLoading={isLoading}
             disabled={
               (isStripe && !cardComplete) ||
+              (isBankTransferMethod && !selectedPaymentMethod) ||
               (!selectedPaymentMethod && !paidByGiftcard)
             }
             data-testid="submit-payment-button"

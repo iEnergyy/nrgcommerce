@@ -6,6 +6,8 @@ import Items from "@modules/order/components/items"
 import OrderDetails from "@modules/order/components/order-details"
 import ShippingDetails from "@modules/order/components/shipping-details"
 import PaymentDetails from "@modules/order/components/payment-details"
+import BankTransferInstructions from "@modules/order/components/bank-transfer-instructions"
+import { isBankTransfer } from "@lib/constants"
 import { HttpTypes } from "@medusajs/types"
 
 type OrderCompletedTemplateProps = {
@@ -15,6 +17,10 @@ type OrderCompletedTemplateProps = {
 export default async function OrderCompletedTemplate({
   order,
 }: OrderCompletedTemplateProps) {
+  // Check if the order was paid with bank transfer
+  const isBankTransferPayment = order.payments?.some(payment => 
+    isBankTransfer(payment.provider_id)
+  )
 
   return (
     <div className="py-6 min-h-[calc(100vh-64px)]">
@@ -31,6 +37,11 @@ export default async function OrderCompletedTemplate({
             <span>Your order was placed successfully.</span>
           </Heading>
           <OrderDetails order={order} />
+          
+          {isBankTransferPayment && (
+            <BankTransferInstructions order={order} />
+          )}
+          
           <Heading level="h2" className="flex flex-row text-3xl-regular">
             Summary
           </Heading>

@@ -29,6 +29,11 @@ module.exports = defineConfig({
               payment_description: "Payment for your order"
             },
           },
+          {
+            resolve: "./src/modules/bank-transfer",
+            id: "bank-transfer",
+            options: {},
+          },
         ],
       },
     },
