@@ -31,8 +31,32 @@ export default async function Nav() {
             </LocalizedClientLink>
           </div>
 
-          {/* Right side - Account & Cart */}
+          {/* Right side - Navigation Links */}
           <div className="flex items-center gap-x-8 h-full flex-1 basis-0 justify-end">
+            {/* Navigation Links */}
+            <div className="hidden md:flex items-center gap-x-6 h-full">
+              <LocalizedClientLink
+                className="relative px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-300 group/about"
+                href="/about"
+                data-testid="nav-about-link"
+              >
+                <span className="relative">
+                  About
+                  <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-900 transform scale-x-0 transition-transform duration-300 group-hover/about:scale-x-100"></span>
+                </span>
+              </LocalizedClientLink>
+              <LocalizedClientLink
+                className="relative px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-300 group/contact"
+                href="/contact"
+                data-testid="nav-contact-link"
+              >
+                <span className="relative">
+                  Contact
+                  <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-900 transform scale-x-0 transition-transform duration-300 group-hover/contact:scale-x-100"></span>
+                </span>
+              </LocalizedClientLink>
+            </div>
+            
             {/* Account Link - Isolated from cart updates */}
             <div className="hidden small:flex items-center h-full">
               <LocalizedClientLink
