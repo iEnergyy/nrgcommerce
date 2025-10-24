@@ -1,36 +1,36 @@
 import React from "react"
 import { Text } from "@medusajs/ui"
-
-interface AnalyticsData {
-  totalRevenue: number
-  totalOrders: number
-  totalCustomers: number
-  conversionRate: number
-  averageOrderValue: number
-  revenueGrowth: number
-  ordersGrowth: number
-  customersGrowth: number
-}
+import { AnalyticsData } from "../types"
 
 interface SalesOverviewProps {
   data: AnalyticsData
 }
 
 const SalesOverview: React.FC<SalesOverviewProps> = ({ data }) => {
+  // Helper function to get a single value from multi-currency data
+  const getValue = (value: Record<string, number> | number): number => {
+    if (typeof value === 'number') return value
+    return Object.values(value).reduce((sum, val) => sum + val, 0)
+  }
+
+  const avgOrderValue = getValue(data.averageOrderValue)
+  const conversionRate = getValue(data.conversionRate)
+  const totalRevenue = getValue(data.totalRevenue)
+
   const metrics = [
     {
       label: "Average Order Value",
-      value: `$${data.averageOrderValue.toFixed(2)}`,
-      status: data.averageOrderValue > 100 ? "good" : "warning"
+      value: `$${avgOrderValue.toFixed(2)}`,
+      status: avgOrderValue > 100 ? "good" : "warning"
     },
     {
       label: "Conversion Rate",
-      value: `${data.conversionRate.toFixed(2)}%`,
-      status: data.conversionRate > 2 ? "good" : "warning"
+      value: `${conversionRate.toFixed(2)}%`,
+      status: conversionRate > 2 ? "good" : "warning"
     },
     {
       label: "Revenue per Customer",
-      value: `$${(data.totalRevenue / data.totalCustomers).toFixed(2)}`,
+      value: `$${(totalRevenue / data.totalCustomers).toFixed(2)}`,
       status: "info"
     }
   ]

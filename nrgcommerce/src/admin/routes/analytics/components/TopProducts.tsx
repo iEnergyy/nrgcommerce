@@ -4,9 +4,9 @@ import { Text, Button } from "@medusajs/ui"
 interface Product {
   id: string
   name: string
-  sales: number
-  revenue: number
-  growth: number
+  sales: Record<string, number>
+  revenue: Record<string, number>
+  growth: Record<string, number>
 }
 
 const TopProducts: React.FC = () => {
@@ -23,37 +23,37 @@ const TopProducts: React.FC = () => {
           {
             id: "1",
             name: "Premium Wireless Headphones",
-            sales: 156,
-            revenue: 12480,
-            growth: 12.5
+            sales: { usd: 100, eur: 56, dop: 45 },
+            revenue: { usd: 8000, eur: 4480, dop: 62500 },
+            growth: { usd: 12.5, eur: 8.3, dop: 15.2 }
           },
           {
             id: "2", 
             name: "Smart Fitness Watch",
-            sales: 98,
-            revenue: 19600,
-            growth: 8.3
+            sales: { usd: 60, eur: 38, dop: 32 },
+            revenue: { usd: 12000, eur: 7600, dop: 44444 },
+            growth: { usd: 8.3, eur: 5.2, dop: 12.8 }
           },
           {
             id: "3",
             name: "Bluetooth Speaker",
-            sales: 87,
-            revenue: 4350,
-            growth: -2.1
+            sales: { usd: 45, eur: 42, dop: 28 },
+            revenue: { usd: 2250, eur: 2100, dop: 38889 },
+            growth: { usd: -2.1, eur: 3.5, dop: 6.7 }
           },
           {
             id: "4",
             name: "Wireless Charging Pad",
-            sales: 76,
-            revenue: 3040,
-            growth: 15.7
+            sales: { usd: 40, eur: 36, dop: 25 },
+            revenue: { usd: 1600, eur: 1440, dop: 34722 },
+            growth: { usd: 15.7, eur: 12.1, dop: 18.3 }
           },
           {
             id: "5",
             name: "USB-C Cable Set",
-            sales: 65,
-            revenue: 1300,
-            growth: 5.2
+            sales: { usd: 35, eur: 30, dop: 22 },
+            revenue: { usd: 700, eur: 600, dop: 30556 },
+            growth: { usd: 5.2, eur: 8.9, dop: 11.4 }
           }
         ]
         
@@ -87,20 +87,27 @@ const TopProducts: React.FC = () => {
             <div>
               <Text className="font-medium">{product.name}</Text>
               <Text className="text-sm text-muted-foreground">
-                {product.sales} sales • ${product.revenue.toLocaleString()} revenue
+                {Object.entries(product.sales)
+                  .map(([curr, sales]) => `${sales} sales (${curr.toUpperCase()})`)
+                  .join(' • ')} • {Object.entries(product.revenue)
+                  .map(([curr, revenue]) => `${curr.toUpperCase()} ${revenue.toLocaleString()}`)
+                  .join(' + ')} revenue
               </Text>
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <span 
-              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                product.growth > 0 
-                  ? "bg-green-500/20 text-green-400" 
-                  : "bg-red-500/20 text-red-400"
-              }`}
-            >
-              {product.growth > 0 ? "+" : ""}{product.growth.toFixed(1)}%
-            </span>
+            {Object.entries(product.growth).map(([curr, growth]) => (
+              <span 
+                key={curr}
+                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  growth > 0 
+                    ? "bg-green-500/20 text-green-400" 
+                    : "bg-red-500/20 text-red-400"
+                }`}
+              >
+                {curr.toUpperCase()} {growth > 0 ? "+" : ""}{growth.toFixed(1)}%
+              </span>
+            ))}
           </div>
         </div>
       ))}
