@@ -8,8 +8,8 @@ WORKDIR /app
 RUN apk add --no-cache curl
 
 # Copy package files first for better caching
-COPY package.json ./
-COPY package-lock.json* ./
+COPY nrgcommerce/package.json ./
+COPY nrgcommerce/package-lock.json* ./
 
 # Install dependencies and Alpine-specific binaries
 # Use npm ci if package-lock.json exists, otherwise fall back to npm install
@@ -21,8 +21,8 @@ RUN if [ -f package-lock.json ]; then \
     npm install @rollup/rollup-linux-x64-musl @swc/core-linux-x64-musl --save-optional && \
     npm cache clean --force
 
-# Copy source code
-COPY . .
+# Copy source code (from nrgcommerce directory)
+COPY nrgcommerce/ .
 
 # Build the admin panel with proper environment
 RUN NODE_ENV=production npm run build
