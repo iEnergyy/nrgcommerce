@@ -8,10 +8,16 @@ WORKDIR /app
 RUN apk add --no-cache curl
 
 # Copy package files first for better caching
-COPY package*.json ./
+COPY package.json ./
+COPY package-lock.json* ./
 
 # Install dependencies and Alpine-specific binaries
-RUN npm ci --only=production && \
+# Use npm ci if package-lock.json exists, otherwise fall back to npm install
+RUN if [ -f package-lock.json ]; then \
+      npm ci --omit=dev; \
+    else \
+      npm install --omit=dev; \
+    fi && \
     npm install @rollup/rollup-linux-x64-musl @swc/core-linux-x64-musl --save-optional && \
     npm cache clean --force
 
