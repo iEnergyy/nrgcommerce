@@ -25,10 +25,16 @@ services:
     container_name: nrgcommerce-backend
     ports:
       - "9000:9000"
+      - "7000:7000"
     env_file:
       - ./nrgcommerce/.env
     environment:
+      # Redis URL
       - REDIS_URL=redis://redis:6379
+      # JWT and Cookie secrets - defaults from ./nrgcommerce/.env, can be overridden via root .env
+      # To override: Create a .env file in root directory and set JWT_SECRET and/or COOKIE_SECRET
+      - JWT_SECRET=${JWT_SECRET:-CIW4MbP6Yq9L8pgKA01zc2TNtxBvU7iJG3VOjfwFkryDhmZudQnHaseSoXEl5R}
+      - COOKIE_SECRET=${COOKIE_SECRET:-a5StN49qo0uRjMfAn7xVdXpTbEiGJYDvyPmKFHQ182gOsCwLWeBkzhlc6Ur3ZI}
     volumes:
       # Mount source code for hot reload in development
       - ./nrgcommerce/src:/app/src
