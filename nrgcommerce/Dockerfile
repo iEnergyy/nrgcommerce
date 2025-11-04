@@ -31,8 +31,9 @@ RUN NODE_ENV=production npm run build
 WORKDIR /app/.medusa/server
 RUN npm install
 
-# Copy environment file for production
-RUN cp ../../.env .env.production
+# Copy environment file for production (if it exists)
+# Note: Railway will inject environment variables at runtime, so this is optional
+RUN if [ -f ../../.env ]; then cp ../../.env .env.production; fi
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
